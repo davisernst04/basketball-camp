@@ -1,229 +1,130 @@
 # Basketball Coaching Platform
 
-A modern web application for managing basketball coaching camps and programs, built with Next.js and Supabase.
+A modern, full-stack web application designed to streamline basketball camp management and player registrations for coaching businesses.
 
-## Overview
+## About
 
-This platform provides a comprehensive solution for basketball coaching businesses to manage their camps, programs, and player registrations. Parents can easily register their children, while coaches and administrators can manage camps and view participant information through an intuitive dashboard.
+This platform bridges the gap between basketball coaching businesses and families by providing an intuitive system for camp management, player registration, and program organization. Built with modern web technologies, it offers a seamless experience for both administrators managing multiple camps and parents enrolling their children.
 
-## Features
+## The Problem It Solves
 
-### Public-Facing
-- **Home Page**: Accessible landing page showcasing coaching services, upcoming camps, and programs
-- **Parent Registration**: Streamlined registration process for parents to enroll their children in camps and programs
-- **Program Pages**: Detailed information about available basketball programs and training sessions
+Basketball coaching businesses often struggle with:
+- Manual registration processes that are time-consuming and error-prone
+- Difficulty tracking player information and camp capacity
+- Limited visibility into program schedules and availability
+- Fragmented systems for payments, communications, and administration
 
-### Administrative
-- **Camp Dashboard**: Centralized view for managing camps, participants, and schedules
-- **Program Management**: Create, edit, and organize basketball programs and training curricula
+This platform consolidates these workflows into a single, cohesive application that scales with the business.
 
-## Tech Stack
+## Key Features
 
-- **Frontend**: Next.js 14+ (App Router)
-- **Backend**: Supabase
-  - Authentication
-  - PostgreSQL Database
-  - Real-time subscriptions
-  - Storage for media assets
-- **Styling**: Tailwind CSS
-- **TypeScript**: For type safety
+### For Parents & Players
+- **Public Landing Page**: Discover available camps and programs with detailed information about schedules, pricing, and skill levels
+- **Simple Registration**: Intuitive form-based registration process with validation to ensure all necessary information is captured
+- **Program Discovery**: Browse basketball programs filtered by age group, skill level, and duration
 
-## Prerequisites
+### For Coaches & Administrators
+- **Camp Dashboard**: Comprehensive view of all camps with real-time registration counts, capacity tracking, and participant management
+- **Program Management**: Create and organize basketball training programs with flexible configurations for different skill levels and age groups
+- **Player Database**: Centralized storage of player information including emergency contacts and medical information
+- **Registration Oversight**: Track payment status, manage waitlists, and handle camp logistics efficiently
 
-Before you begin, ensure you have the following installed:
-- Node.js 18.x or higher
-- npm or yarn
-- Git
+## Technical Architecture
 
-## Getting Started
+### Stack
 
-### 1. Clone the Repository
+- **Frontend**: Next.js 14+ with App Router for server-side rendering and optimal performance
+- **Database**: PostgreSQL for robust, relational data management
+- **ORM**: Prisma for type-safe database access and intuitive query building
+- **Authentication**: NextAuth.js (Auth.js v5) for secure admin authentication
+- **Styling**: Tailwind CSS for responsive, modern UI design
+- **Language**: TypeScript throughout for type safety and developer experience
 
-```bash
-git clone <repository-url>
-cd basketball-coaching-platform
-```
+### Why This Stack?
 
-### 2. Install Dependencies
+This technology combination was chosen for its balance of developer experience, type safety, and production readiness:
 
-```bash
-npm install
-# or
-yarn install
-```
+- **Next.js** provides excellent SEO for public pages (crucial for parent discovery), fast page loads, and a streamlined development experience
+- **Prisma + PostgreSQL** offers end-to-end type safety with automatic TypeScript type generation from the database schema, making the codebase more maintainable and less prone to runtime errors
+- **NextAuth.js** handles authentication securely with minimal configuration, supporting role-based access for different admin levels
+- **TypeScript** ensures code quality and catches potential issues before they reach production
 
-### 3. Set Up Supabase
+## Data Model
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Copy your project URL and anon key
-3. Set up the database schema (see Database Schema section)
+The application is built around four core entities:
 
-### 4. Environment Variables
+**Players**: Store comprehensive information about enrolled children including personal details, parent contacts, emergency information, and medical notes.
 
-Create a `.env.local` file in the root directory:
+**Camps**: Represent individual basketball camps with configurable dates, capacity limits, age restrictions, pricing, and status tracking (draft, published, full, completed).
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+**Programs**: Define structured basketball training curricula with details about duration, skill levels, and target age groups.
 
-### 5. Run the Development Server
+**Registrations**: Link players to camps with payment tracking and enrollment status, ensuring data integrity with unique constraints.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Database Schema
-
-### Tables
-
-#### `players`
-- `id` (uuid, primary key)
-- `first_name` (text)
-- `last_name` (text)
-- `date_of_birth` (date)
-- `parent_email` (text)
-- `parent_phone` (text)
-- `emergency_contact` (text)
-- `medical_info` (text, optional)
-- `created_at` (timestamp)
-
-#### `camps`
-- `id` (uuid, primary key)
-- `name` (text)
-- `description` (text)
-- `start_date` (date)
-- `end_date` (date)
-- `capacity` (integer)
-- `age_min` (integer)
-- `age_max` (integer)
-- `price` (decimal)
-- `status` (enum: draft, published, full, completed)
-- `created_at` (timestamp)
-
-#### `programs`
-- `id` (uuid, primary key)
-- `name` (text)
-- `description` (text)
-- `duration_weeks` (integer)
-- `skill_level` (enum: beginner, intermediate, advanced)
-- `age_group` (text)
-- `created_at` (timestamp)
-
-#### `registrations`
-- `id` (uuid, primary key)
-- `player_id` (uuid, foreign key)
-- `camp_id` (uuid, foreign key)
-- `registration_date` (timestamp)
-- `payment_status` (enum: pending, paid, refunded)
-- `created_at` (timestamp)
-
-### Row Level Security (RLS)
-
-Enable RLS on all tables and create appropriate policies:
-- Public read access for published camps and programs
-- Authenticated users can create registrations
-- Admin users can manage all data
+**Users**: Admin and coach accounts with role-based permissions for system access.
 
 ## Project Structure
 
-```
-basketball-coaching-platform/
-├── app/
-│   ├── (public)/
-│   │   ├── page.tsx           # Home page
-│   │   ├── register/
-│   │   │   └── page.tsx       # Registration form
-│   │   └── programs/
-│   │       └── page.tsx       # Programs listing
-│   ├── (dashboard)/
-│   │   └── dashboard/
-│   │       └── page.tsx       # Camp dashboard
-│   ├── layout.tsx
-│   └── globals.css
-├── components/
-│   ├── ui/                    # Reusable UI components
-│   ├── forms/                 # Form components
-│   └── layout/                # Layout components
-├── lib/
-│   ├── supabase/
-│   │   ├── client.ts          # Supabase client
-│   │   └── server.ts          # Server-side Supabase
-│   └── utils.ts               # Utility functions
-├── types/
-│   └── database.ts            # TypeScript types
-└── public/
-    └── images/                # Static assets
-```
+The codebase follows Next.js 14+ App Router conventions with clear separation of concerns:
 
-## Key Routes
+- Public-facing pages live in route groups for easy identification
+- API routes handle server-side logic with proper authentication middleware
+- Prisma schema defines the database structure in a single, version-controlled file
+- Type definitions are automatically generated from the Prisma schema
+- Reusable UI components promote consistency across the application
 
-- `/` - Home page
-- `/register` - Player registration form
-- `/programs` - Available programs
-- `/dashboard` - Camp management dashboard (protected)
+## Security Considerations
 
-## Authentication
+- Role-based access control ensures only authorized users can access administrative features
+- Prisma's parameterized queries prevent SQL injection attacks
+- NextAuth.js provides secure session management with encrypted tokens
+- Environment variables keep sensitive configuration out of the codebase
+- Database migrations are version-controlled for audit trails
 
-The platform uses Supabase Authentication with the following features:
-- Email/password authentication for administrators
-- Magic link authentication option
-- Protected routes using middleware
+## Deployment Architecture
 
-## Deployment
+The application is designed for modern serverless deployment:
 
-### Vercel (Recommended)
+- **Frontend/Backend**: Deployed to Vercel with automatic CI/CD from GitHub
+- **Database**: Hosted on platforms like Neon, Railway, or Vercel Postgres for managed PostgreSQL
+- **Migrations**: Applied automatically during deployment or via CI/CD pipeline
+- **Environment Configuration**: Managed through platform-specific environment variable systems
 
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Add environment variables
-4. Deploy
+## Future Enhancements
 
-### Other Platforms
+Potential features on the roadmap include:
 
-The application can be deployed to any platform that supports Next.js applications.
+- Payment processing integration (Stripe) for seamless transactions
+- Automated email notifications for registration confirmations and camp reminders
+- Attendance tracking with check-in/check-out functionality
+- Digital waiver signing and document management
+- Parent portal for viewing child progress and upcoming schedules
+- Coach evaluation and feedback system
+- Analytics dashboard for business insights
+- Mobile application for on-the-go access
 
-## Environment Variables Reference
+## Development Status
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Yes |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous key | Yes |
-
-## Development Roadmap
-
-- [ ] Basic home page
-- [ ] Player registration form
-- [ ] Camp listing and details
-- [ ] Admin dashboard
-- [ ] Payment integration
-- [ ] Email notifications
-- [ ] Attendance tracking
-- [ ] Mobile app version
+This is an active project in development. The core architecture and data model are established, with ongoing work on feature implementation and user experience refinement.
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a pull request
+Contributions are welcome! Whether you're interested in adding features, improving documentation, or fixing bugs, please feel free to open issues or submit pull requests.
+
+## Technical Requirements
+
+- Node.js 18.x or higher
+- PostgreSQL database (local or hosted)
+- Modern web browser with JavaScript enabled
 
 ## License
 
 [Choose appropriate license]
 
-## Support
+## Contact
 
-For questions or support, contact [your-email@example.com]
+For questions, suggestions, or collaboration opportunities, please open an issue or reach out via [your contact method].
 
-## Acknowledgments
+---
 
-- Next.js documentation
-- Supabase documentation
-- Basketball coaching community feedback
+Built with ❤️ for basketball coaching communities
